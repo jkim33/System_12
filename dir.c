@@ -4,11 +4,34 @@
 #include <dirent.h>
 #include <sys/types.h>
 
-int main() {
 
+char * get_size(char * buffer, double size) {
+  if (size < 1024){
+    sprintf(buffer, "%f B", size);
+    return buffer;
+  }
+  
+  size /= 1024.0;
+  if (size < 1024) {
+    sprintf(buffer, "%f KB", size);
+    return buffer;
+  }
+  size /= 1024.0;
+  if (size < 1024) {
+    sprintf(buffer, "%f MB", size);
+    return buffer;
+  }
+  size /= 1024.0;
+  sprintf(buffer, "%f GB", size);
+
+  return buffer;
+}
+
+int main() {
+  char * info;
   struct stat buffer;
   
-  int size = 0;
+  double size = 0;
   DIR* directory1 = opendir(".");
   struct dirent *entry1;
   entry1 = readdir(directory1);
@@ -35,7 +58,9 @@ int main() {
     entry2 = readdir(directory2);
   }
 
-  printf("Total Directory Size: %d bytes\n", size); 
+  printf("Size: %f\n", size);
+
+  //printf("Total Directory Size: %s\n", get_size(info, size)); 
   
   return 0;
 }
