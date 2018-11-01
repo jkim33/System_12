@@ -1,0 +1,14 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <dirend.h>
+#include <sys/types.h>
+
+int main() {
+  DIR* directory = opendir(".");
+  struct dirent *entry;
+  entry = readdir(directory);
+  while (entry) {
+    
+  }
+}
