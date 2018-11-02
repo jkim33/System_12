@@ -3,31 +3,45 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <sys/types.h>
+#include <errno.h>
+#include <string.h>
 
 
 char * get_size(char * buffer, double size) {
   if (size < 1024){
-    sprintf(buffer, "%f B", size);
+    sprintf(buffer, "%lf B", size);
     return buffer;
   }
   
   size /= 1024.0;
   if (size < 1024) {
-    sprintf(buffer, "%f KB", size);
+    sprintf(buffer, "%lf KB", size);
     return buffer;
   }
   size /= 1024.0;
   if (size < 1024) {
-    sprintf(buffer, "%f MB", size);
+    sprintf(buffer, "%lf MB", size);
     return buffer;
   }
   size /= 1024.0;
-  sprintf(buffer, "%f GB", size);
+  sprintf(buffer, "%lf GB", size);
 
   return buffer;
 }
 
-int main() {
+int main(int argc, char * argv[]) {
+
+  int correct = 1;
+  while (correct) {
+    if (open(argv[1], O_RDONLY) == -1) {
+      printf("%s\n", strerr(errno));
+      return 1;
+    }
+    else {
+      correct = 0;
+    }
+  }
+  
   char * info;
   struct stat buffer;
   
