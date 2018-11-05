@@ -6,47 +6,29 @@
 #include <errno.h>
 #include <string.h>
 
-
-char * get_size(char * buffer, double size) {
-  if (size < 1024){
-    sprintf(buffer, "%lf B", size);
-    return buffer;
-  }
-  
-  size /= 1024.0;
-  if (size < 1024) {
-    sprintf(buffer, "%lf KB", size);
-    return buffer;
-  }
-  size /= 1024.0;
-  if (size < 1024) {
-    sprintf(buffer, "%lf MB", size);
-    return buffer;
-  }
-  size /= 1024.0;
-  sprintf(buffer, "%lf GB", size);
-
-  return buffer;
-}
-
 int main(int argc, char * argv[]) {
 
-  int correct = 1;
-  while (correct) {
-    if (open(argv[1], O_RDONLY) == -1) {
-      printf("%s\n", strerr(errno));
-      return 1;
-    }
-    else {
-      correct = 0;
-    }
+  char *s;
+  int size = 0;
+  struct stat buffer;
+
+  s = argv[1];
+
+  if (argc == 1) {
+    char *temp;
+    printf("Please enter a directory: ");
+    fgets(temp, 100, stdin);
+    temp[strlen(temp)-1] = 0;
+    s = temp;
+  }
+
+  DIR* directory = opendir(s);
+  if (errno > 0) {
+    printf("Error: %s\n",strerror(errno));
+    return 0;
   }
   
-  char * info;
-  struct stat buffer;
-  
-  double size = 0;
-  DIR* directory1 = opendir(".");
+  DIR* directory1 = opendir(s);
   struct dirent *entry1;
   entry1 = readdir(directory1);
   printf("Directories: \n");
@@ -59,7 +41,7 @@ int main(int argc, char * argv[]) {
     entry1 = readdir(directory1);
   }
 
-  DIR* directory2 = opendir(".");
+  DIR* directory2 = opendir(s);
   struct dirent *entry2;
   entry2 = readdir(directory2);
   printf("Regular Files: \n");
@@ -72,9 +54,7 @@ int main(int argc, char * argv[]) {
     entry2 = readdir(directory2);
   }
 
-  printf("Size: %f\n", size);
-
-  //printf("Total Directory Size: %s\n", get_size(info, size)); 
+  printf("Size: %d bytes\n", size);
   
   return 0;
 }
